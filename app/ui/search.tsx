@@ -1,5 +1,6 @@
 'use client';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
+import { useDebouncedCallback } from 'use-debounce'
 
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
@@ -17,16 +18,17 @@ export default function Search({ placeholder }: { placeholder: string }) {
   //Third - Keep the URL in sync with the input field
   //Fourth - update the table to reflect the search query
 
-  function handleSearch(term: string) {
+  const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams)
+    params.set('page', '1')
     if(term) {
       params.set('query', term)
     } else {
       params.delete('query')
     }
     replace(`${pathname}?${params.toString()}`)
-    console.log(term)
-  }
+    console.log(`searching...${term}`)
+  }, 300);
   return (
     <div className="relative flex flex-1 flex-shrink-0">
       <label htmlFor="search" className="sr-only">
